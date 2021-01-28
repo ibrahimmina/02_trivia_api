@@ -6,6 +6,7 @@ import Search from './Search';
 import $ from 'jquery';
 
 class QuestionView extends Component {
+
   constructor(){
     super();
     this.state = {
@@ -14,6 +15,7 @@ class QuestionView extends Component {
       totalQuestions: 0,
       categories: {},
       currentCategory: null,
+      serverurl: 'http://192.168.1.11:5000/api/v1'
     }
   }
 
@@ -21,9 +23,11 @@ class QuestionView extends Component {
     this.getQuestions();
   }
 
+  
+
   getQuestions = () => {
     $.ajax({
-      url: `/questions?page=${this.state.page}`, //TODO: update request URL
+      url: `${this.state.serverurl}/questions?page=${this.state.page}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({
@@ -60,7 +64,7 @@ class QuestionView extends Component {
 
   getByCategory= (id) => {
     $.ajax({
-      url: `/categories/${id}/questions`, //TODO: update request URL
+      url: `${this.state.serverurl}/categories/${id}/questions`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({
@@ -78,13 +82,14 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `${this.state.serverurl}/questions`, //TODO: update request URL
       type: "POST",
+      headers: {  'Access-Control-Allow-Origin': '*' },
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify({searchTerm: searchTerm}),
       xhrFields: {
-        withCredentials: true
+        withCredentials: false
       },
       crossDomain: true,
       success: (result) => {
@@ -105,7 +110,7 @@ class QuestionView extends Component {
     if(action === 'DELETE') {
       if(window.confirm('are you sure you want to delete the question?')) {
         $.ajax({
-          url: `/questions/${id}`, //TODO: update request URL
+          url: `${this.state.serverurl}/questions/${id}`, //TODO: update request URL
           type: "DELETE",
           success: (result) => {
             this.getQuestions();
