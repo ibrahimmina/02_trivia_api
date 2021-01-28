@@ -125,28 +125,19 @@ def create_app(test_config=None):
   @app.route('/api/v1/questions',  methods=['POST'])
   @cross_origin()
   def submitQuestion():
-      questionslist =[]
-      request_data = request.get_json()
+    questionslist =[]
+    request_data = request.get_json()
+    print (request_data)
+    try:
+      question = Question(request_data.get("question"), request_data.get("answer"), request_data.get("category"), request_data.get("difficulty"))
+      question.insert()           
+      return jsonify(success=True)
+    except:
+      db.session.rollback()
+      return jsonify(success=False)
+    finally:
+      db.session.close()    
 
-      search_term = request_data.get("searchTerm")
-      search = "%{}%".format(search_term)
-      
-      questions = Question.query.filter(Question.question.ilike(search)).all()
-
-      for question in questions:
-        questionslist.append({
-          'id': question.id,
-          'question': question.question,
-          'answer': question.answer,
-          'category': question.category,
-          'difficulty': question.difficulty
-        })
-
-      return jsonify({
-        "questions":questionslist, 
-        "totalQuestions":Question.query.count(),
-        "currentCategory": ""
-      })  
   '''
   @TODO: 
   Create a POST endpoint to get questions based on a search term. 
@@ -157,7 +148,7 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-  @app.route('/api/v1/questions',  methods=['POST'])
+  @app.route('/api/v1/questions/search',  methods=['POST'])
   @cross_origin()
   def submitSearch():
       questionslist =[]
