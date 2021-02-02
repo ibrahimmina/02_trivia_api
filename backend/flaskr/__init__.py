@@ -37,6 +37,10 @@ def create_app(test_config=None):
       categorieslist = []    
 
       categories = Category.query.all()
+
+      if len(categories) == 0:
+        abort(404)
+        
       for category in categories:
         categorieslist.append(category.type.lower())
 
@@ -85,9 +89,9 @@ def create_app(test_config=None):
       return jsonify({
         "questions":questionslist[start:end], 
         "page": page, 
-        "totalQuestions":Question.query.count(),
+        "total_questions":Question.query.count(),
         "categories":categorieslist,
-        "currentCategory": ""
+        "current_category": ""
       })  
   '''
   @TODO: 
@@ -218,13 +222,63 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/api/v1/quizzes' , methods=['POST'])
+  @cross_origin()
+  def getNextQuestion():
+    currentQuestion = {}
+    request_data = request.get_json()
+
+
+    previousquestionslist = request_data.get("previous_questions")
+    quiz_category = request_data.get("quiz_category") 
+
+    print (quiz_category["id"])
+
+
+    questions = Question.query.filter_by(category=quiz_category["id"]).all()
+    print (questions)
+    for question in questions:
+      print (question.id not in previousquestionslist)
+      if (question.id not in previousquestionslist):
+        previousquestionslist.append(question.id)
+        currentQuestion = {
+          'id': question.id,
+          'question': question.question,
+          'answer': question.answer,
+          'category': question.category,
+          'difficulty': question.difficulty
+        }
+        print (previousquestionslist)
+        print (currentQuestion)
+        break
+
+    print (previousquestionslist)
+    return jsonify({
+      "showAnswer": False, 
+      "previousQuestions":previousquestionslist,
+      "question": currentQuestion,
+    })      
 
   '''
   @TODO: 
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(404)
+  def not_found(error):
+      return jsonify({
+          "success": False, 
+          "error": 404,
+          "message": "Not found"
+          }), 404
   
+  @app.errorhandler(422)
+  def not_found(error):
+      return jsonify({
+          "success": False, 
+          "error": 422,
+          "message": "Not found"
+          }), 422          
   return app
 
     
