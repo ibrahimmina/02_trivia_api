@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 import random
@@ -12,6 +12,7 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   db = setup_db(app)
+  
   
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
@@ -72,10 +73,17 @@ def create_app(test_config=None):
       categorieslist = []    
 
       categories = Category.query.all()
+
+      if len(categories) == 0:
+        abort(404) 
+
       for category in categories:
         categorieslist.append(category.type.lower())
       
       questions = Question.query.all()
+
+      if len(questions) == 0:
+        abort(404)      
 
       for question in questions:
         questionslist.append({
@@ -278,7 +286,7 @@ def create_app(test_config=None):
           "success": False, 
           "error": 422,
           "message": "Not found"
-          }), 422          
+          }), 422     
   return app
 
     
