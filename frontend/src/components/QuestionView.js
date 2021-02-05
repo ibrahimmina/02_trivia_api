@@ -15,7 +15,7 @@ class QuestionView extends Component {
       totalQuestions: 0,
       categories: {},
       currentCategory: null,
-      serverurl: 'http://192.168.1.11:5000/api/v1'
+      serverurl: '/api/v1'
     }
   }
 

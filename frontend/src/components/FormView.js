@@ -12,7 +12,7 @@ class FormView extends Component {
       difficulty: 1,
       category: 1,
       categories: {},
-      serverurl: 'http://192.168.1.11:5000/api/v1'
+      serverurl: '/api/v1'
     }
   }
 
