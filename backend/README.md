@@ -187,15 +187,15 @@ GET '/api/v1/questions'
     "total_questions": 25
 }
 
-DELETE '/api/v1/questions'
-- Creates a new question. 
+DELETE '/api/v1/questions/<int:question_id>'
+- Delete a question of specific ID.
 - Request Arguments: 
     - question_id: The requested question ID to be deleted
 - Returns: 
     - success = True in case the question is deleted
 
-POST '/api/v1/questions/<int:question_id>'
-- Delete a question of specific ID. 
+POST '/api/v1/questions'
+- Creates a new question. 
 - Request Arguments: 
     - An dictionary with the following items
         - question: The actual question

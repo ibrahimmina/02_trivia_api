@@ -145,7 +145,7 @@ def create_app(test_config=None):
     try:
       question = Question(request_data.get("question"), request_data.get("answer"), request_data.get("category"), request_data.get("difficulty"))
       question.insert()           
-      return jsonify(success=True)
+      return jsonify(success=True,id=question.id)
     except:
       db.session.rollback()
       return jsonify(success=False)
