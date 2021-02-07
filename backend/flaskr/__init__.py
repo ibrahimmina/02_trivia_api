@@ -139,7 +139,9 @@ def create_app(test_config=None):
   def submitQuestion():
     questionslist =[]
     request_data = request.get_json()
-    print (request_data)
+    if ("question" not in request_data or "answer" not in request_data or "category" not in request_data or "difficulty" not in request_data):
+      abort(422) 
+
     try:
       question = Question(request_data.get("question"), request_data.get("answer"), request_data.get("category"), request_data.get("difficulty"))
       question.insert()           
@@ -239,8 +241,6 @@ def create_app(test_config=None):
 
     previousquestionslist = request_data.get("previous_questions")
     quiz_category = request_data.get("quiz_category") 
-
-    print (quiz_category["id"])
 
 
     questions = Question.query.filter_by(category=quiz_category["id"]).all()
