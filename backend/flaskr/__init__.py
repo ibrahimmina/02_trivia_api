@@ -166,9 +166,17 @@ def create_app(test_config=None):
   @cross_origin()
   def submitSearch():
       questionslist =[]
+
+
+      if (request.get_json() is None):
+        abort(422) 
+
       request_data = request.get_json()
 
-      search_term = request_data.get("searchTerm")
+      if ("searchTerm" not in request_data):
+        abort(422) 
+
+      search_term = request_data.get("searchTerm")    
       search = "%{}%".format(search_term)
       
       questions = Question.query.filter(Question.question.ilike(search)).all()
@@ -201,8 +209,15 @@ def create_app(test_config=None):
   def getByCategory(category_id):
     questionslist =[]
     
+
+    category = Category.query.filter_by(id=category_id).all()
+
+    if len(category) == 0:
+      abort(404)     
+
     questions = Question.query.filter_by(category=category_id).all()
 
+    
     currentCategory = Category.query.filter_by(id=category_id).first()
 
     for question in questions:
@@ -238,7 +253,9 @@ def create_app(test_config=None):
     currentQuestion = {}
     request_data = request.get_json()
 
-
+    if (request.get_json() is None):
+      abort(422) 
+    
     previousquestionslist = request_data.get("previous_questions")
     quiz_category = request_data.get("quiz_category") 
 
