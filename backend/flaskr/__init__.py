@@ -143,7 +143,8 @@ def create_app(test_config=None):
       abort(422) 
 
     try:
-      question = Question(request_data.get("question"), request_data.get("answer"), request_data.get("category"), request_data.get("difficulty"))
+      category = Category.query.filter_by(type=request_data.get("category").capitalize()).first()
+      question = Question(request_data.get("question"), request_data.get("answer"), category.id, request_data.get("difficulty"))
       question.insert()           
       return jsonify(success=True,id=question.id)
     except:
@@ -204,21 +205,18 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
-  @app.route('/api/v1/categories/<int:category_id>/questions')
+  @app.route('/api/v1/categories/<string:category_type>/questions')
   @cross_origin()
-  def getByCategory(category_id):
+  def getByCategory(category_type):
     questionslist =[]
-    #print (category_id)
-    category = bool(Category.query.filter_by(id=category_id).first())
-    #print (category)
-    if category == False:
-      abort(422)     
 
-    questions = Question.query.filter_by(category=category_id).all()
-    #print (questions)
+    category = Category.query.filter_by(type=category_type.capitalize()).first()
+      
+    if (bool(category) == False):
+      abort(422) 
+      
+    questions = Question.query.filter_by(category=category.id).all()
     
-    currentCategory = Category.query.filter_by(id=category_id).first()
-
     for question in questions:
       questionslist.append({
         'id': question.id,
@@ -231,7 +229,7 @@ def create_app(test_config=None):
     return jsonify({
       "questions":questionslist, 
       "totalQuestions":len(questionslist),
-      "currentCategory": currentCategory.type
+      "currentCategory": category.type
     })      
 
 
@@ -256,11 +254,24 @@ def create_app(test_config=None):
       abort(422) 
     
     previousquestionslist = request_data.get("previous_questions")
-    quiz_category = request_data.get("quiz_category") 
+    quiz_category = request_data.get("quiz_category")
+    
+    category_type =  quiz_category["type"]
 
-    questions = Question.query.filter_by(category=quiz_category["id"]).all()
+    if (category_type == "click"):
+      questions = Question.query.all()
+    
+    else:
+      category = Category.query.filter_by(type=category_type.capitalize()).first()
+      
+      if (bool(category) == False):
+        abort(422) 
+      
+      questions = Question.query.filter_by(category=category.id).all()
+
+
+    
     for question in questions:
-      print (question.id not in previousquestionslist)
       if (question.id not in previousquestionslist):
         previousquestionslist.append(question.id)
         currentQuestion = {
@@ -270,11 +281,9 @@ def create_app(test_config=None):
           'category': question.category,
           'difficulty': question.difficulty
         }
-        print (previousquestionslist)
-        print (currentQuestion)
+
         break
 
-    print (previousquestionslist)
     return jsonify({
       "showAnswer": False, 
       "previousQuestions":previousquestionslist,

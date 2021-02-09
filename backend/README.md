@@ -241,8 +241,94 @@ POST '/api/v1/questions/search'
 }
 
 
-GET '/api/v1/categories/<int:category_id>/questions'
-- Fetches a dictionary of questions and catgories. 
+GET '/api/v1/categories/<string:category_type>/questions'
+- Fetches the questions based on certain category selected by user
+- Request Arguments:
+    - category_type: the selected category type by user from frontend
+- Returns: A dictionary of the following
+    - currentCategory: the selected user category
+    - questions: a dictionary of questions in the selected user category
+    - totalQuestions: The total number of returned questions.
+{
+  "currentCategory": "Science", 
+  "questions": [
+    {
+      "answer": "The Liver", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 20, 
+      "question": "What is the heaviest organ in the human body?"
+    }, 
+    {
+      "answer": "Alexander Fleming", 
+      "category": 1, 
+      "difficulty": 3, 
+      "id": 21, 
+      "question": "Who discovered penicillin?"
+    }, 
+    {
+      "answer": "Blood", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 22, 
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    }, 
+    {
+      "answer": "test", 
+      "category": 1, 
+      "difficulty": 1, 
+      "id": 24, 
+      "question": "test"
+    }, 
+    {
+      "answer": "new", 
+      "category": 1, 
+      "difficulty": 2, 
+      "id": 25, 
+      "question": "new"
+    }, 
+    {
+      "answer": "test", 
+      "category": 1, 
+      "difficulty": 1, 
+      "id": 31, 
+      "question": "test"
+    }, 
+    {
+      "answer": "test_new", 
+      "category": 1, 
+      "difficulty": 1, 
+      "id": 32, 
+      "question": "test_new"
+    }, 
+    {
+      "answer": "new new new", 
+      "category": 1, 
+      "difficulty": 1, 
+      "id": 41, 
+      "question": "new new new"
+    }, 
+    {
+      "answer": "new", 
+      "category": 1, 
+      "difficulty": 1, 
+      "id": 42, 
+      "question": "new"
+    }, 
+    {
+      "answer": "mina", 
+      "category": 1, 
+      "difficulty": 1, 
+      "id": 43, 
+      "question": "mina"
+    }
+  ], 
+  "totalQuestions": 10
+}
+
+
+GET '/api/v1/quizzes'
+- Fetches a dictionary of questions and catgories for user to play the trivia. 
 - Request Arguments: 
     - previous_questions: A list of previous questions
     - quiz_category: Dictionary with the following parameters

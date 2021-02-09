@@ -10,7 +10,7 @@ class FormView extends Component {
       question: "",
       answer: "",
       difficulty: 1,
-      category: 1,
+      category: 0,
       categories: {},
       serverurl: '/api/v1'
     }
@@ -43,7 +43,7 @@ class FormView extends Component {
         question: this.state.question,
         answer: this.state.answer,
         difficulty: this.state.difficulty,
-        category: this.state.category
+        category: this.state.categories[this.state.category]
       }),
       xhrFields: {
         withCredentials: false

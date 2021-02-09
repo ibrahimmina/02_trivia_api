@@ -31,13 +31,13 @@ class TriviaTestCase(unittest.TestCase):
         self.new_question_correct = {
             'question' : 'test_question', 
             'answer' : 'test_answer', 
-            'category' : '2', 
+            'category' : 'science', 
             'difficulty' : '5'
         }
 
         self.new_question_false = {
             'answer' : 'test_answer', 
-            'category' : '2', 
+            'category' : 'science', 
             'difficulty' : '5'
         }
 
@@ -99,6 +99,7 @@ class TriviaTestCase(unittest.TestCase):
     #POST '/api/v1/questions' Happy Scenario
 
     def test_submitQuestion_happy(self):
+        self.category.insert() 
         res = self.client.post('/api/v1/questions', json=self.new_question_correct)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -148,13 +149,13 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client.post('/api/v1/questions/search')
         self.assertEqual(res.status_code, 422)  
 
-    #GET '/api/v1/categories/<int:category_id>/questions' Happy Scenario
+    #GET '/api/v1/categories/<string:category_id>/questions' Happy Scenario
 
     def test_get_question_by_categories_happy(self):
         self.category.insert() 
         self.question = Question('test_question', 'test_answer', self.category.id, 5)
         self.question.insert() 
-        url = '/api/v1/categories/{}/questions'.format(self.category.id)
+        url = '/api/v1/categories/{}/questions'.format(self.category.type)
         res = self.client.get(url)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -162,7 +163,7 @@ class TriviaTestCase(unittest.TestCase):
     #GET '/api/v1/categories/<int:category_id>/questions' Bad Input
 
     def test_get_question_by_categories_bad(self):
-        res = self.client.get('/api/v1/categories/1/questions')
+        res = self.client.get('/api/v1/categories/test/questions')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 422)
 
@@ -175,7 +176,7 @@ class TriviaTestCase(unittest.TestCase):
         request_json =  {
             'previous_questions':[],
             'quiz_category': {
-                "id": self.category.id
+                "type": self.category.type
             }
         }
 
