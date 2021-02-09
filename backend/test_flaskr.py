@@ -2,6 +2,7 @@ import os
 import unittest
 import json
 import time
+from sys import exit
 
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.test import EnvironBuilder
@@ -108,7 +109,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_submitQuestion_bad(self):
         res = self.client.post('/api/v1/questions', json=self.new_question_false)
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
 
     #DELETE '/api/v1/questions/<int:question_id>' Happy Scenario
@@ -151,8 +152,10 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_get_question_by_categories_happy(self):
         self.category.insert() 
-        self.question = Question('test_question', 'test_answer', self.category.id, 5)        
-        res = self.client.get('/api/v1/categories/' + str(self.category.id) + '/questions')
+        self.question = Question('test_question', 'test_answer', self.category.id, 5)
+        self.question.insert() 
+        url = '/api/v1/categories/{}/questions'.format(self.category.id)
+        res = self.client.get(url)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
 
@@ -168,10 +171,12 @@ class TriviaTestCase(unittest.TestCase):
     def test_quizzes_happy(self):
         self.category.insert() 
         self.question = Question('test_question', 'test_answer', self.category.id, 5)        
-        
+        self.question.insert() 
         request_json =  {
-            'previous_questions':'',
-            'quiz_category': self.category.id
+            'previous_questions':[],
+            'quiz_category': {
+                "id": self.category.id
+            }
         }
 
         res = self.client.post('/api/v1/quizzes', json=request_json)

@@ -244,7 +244,9 @@ POST '/api/v1/questions/search'
 GET '/api/v1/categories/<int:category_id>/questions'
 - Fetches a dictionary of questions and catgories. 
 - Request Arguments: 
-    - category_id: The requested category ID from the frontend
+    - previous_questions: A list of previous questions
+    - quiz_category: Dictionary with the following parameters
+        - id: The requested category ID from the frontend
 - Returns: 
     - previousQuestions: The previous requested questions from the user
     - An object questions, that contains 

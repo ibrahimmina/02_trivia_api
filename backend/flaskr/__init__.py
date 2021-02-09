@@ -208,15 +208,14 @@ def create_app(test_config=None):
   @cross_origin()
   def getByCategory(category_id):
     questionslist =[]
-    
-
-    category = Category.query.filter_by(id=category_id).all()
-
-    if len(category) == 0:
-      abort(404)     
+    #print (category_id)
+    category = bool(Category.query.filter_by(id=category_id).first())
+    #print (category)
+    if category == False:
+      abort(422)     
 
     questions = Question.query.filter_by(category=category_id).all()
-
+    #print (questions)
     
     currentCategory = Category.query.filter_by(id=category_id).first()
 
@@ -259,9 +258,7 @@ def create_app(test_config=None):
     previousquestionslist = request_data.get("previous_questions")
     quiz_category = request_data.get("quiz_category") 
 
-
     questions = Question.query.filter_by(category=quiz_category["id"]).all()
-    print (questions)
     for question in questions:
       print (question.id not in previousquestionslist)
       if (question.id not in previousquestionslist):
