@@ -199,7 +199,7 @@ POST '/api/v1/questions'
 - Request Arguments: 
     - An dictionary with the following items
         - question: The actual question
-        - Category: The question category id
+        - Category: The question category type
         - difficulty: The question difficulty level
         - answer: The question answer
 - Returns: 
